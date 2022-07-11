@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('chat', function ($user) {
     return $user;
 });
+Broadcast::channel('auction-{id}', function ($user, $id) {
+    return $user;
+});
+
+Broadcast::channel('chat.{subject_id}.{id}', function ($user, $subject_id, $id) {
+    return $user;
+});

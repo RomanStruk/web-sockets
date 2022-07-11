@@ -1,81 +1,64 @@
-require('./bootstrap');
+import './bootstrap';
 
-window.Vue = require('vue');
+import Alpine from 'alpinejs';
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+window.Alpine = Alpine;
 
-const files = require.context('./', true, /\.vue$/i)
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-const app = new Vue({
-    el: '#app',
-
-    data: {
-        messages: [],
-        users: [],
-    },
-
-    created() {
-        this.fetchMessages();
-
-        Echo.join('chat')
-            .here(users => {
-                this.users = users;
-            })
-            .joining(user => {
-                this.users.push(user);
-            })
-            .leaving(user => {
-                this.users = this.users.filter(u => u.id !== user.id);
-            })
-            .listenForWhisper('typing', ({id, name}) => {
-                this.users.forEach((user, index) => {
-                    if (user.id === id) {
-                        user.typing = true;
-                        this.$set(this.users, index, user);
-                    }
-                });
-            })
-            .listen('MessageSent', (event) => {
-                this.messages.push({
-                    message: event.message.message,
-                    user: event.user
-                });
-
-                this.users.forEach((user, index) => {
-                    if (user.id === event.user.id) {
-                        user.typing = false;
-                        this.$set(this.users, index, user);
-                    }
-                });
-            });
-    },
-
-    methods: {
-        fetchMessages() {
-            axios.get('/messages').then(response => {
-                this.messages = response.data;
-            });
+function timer(expiry) {
+    return {
+        expiry: expiry,
+        remaining:null,
+        init() {
+            this.setRemaining()
+            setInterval(() => {
+                this.setRemaining();
+            }, 1000);
         },
-
-        addMessage(message) {
-            this.messages.push(message);
-
-            axios.post('/messages', message).then(response => {
-                console.log(response.data);
-            });
-        }
+        setRemaining() {
+            const diff = this.expiry - new Date().getTime();
+            this.remaining =  parseInt(diff / 1000);
+        },
+        days() {
+            return {
+                value:this.remaining / 86400,
+                remaining:this.remaining % 86400
+            };
+        },
+        hours() {
+            return {
+                value:this.days().remaining / 3600,
+                remaining:this.days().remaining % 3600
+            };
+        },
+        minutes() {
+            return {
+                value:this.hours().remaining / 60,
+                remaining:this.hours().remaining % 60
+            };
+        },
+        seconds() {
+            return {
+                value:this.minutes().remaining,
+            };
+        },
+        format(value) {
+            return ("0" + parseInt(value)).slice(-2)
+        },
+        time(){
+            return {
+                days:this.format(this.days().value),
+                hours:this.format(this.hours().value),
+                minutes:this.format(this.minutes().value),
+                seconds:this.format(this.seconds().value),
+            }
+        },
     }
+}
+
+Alpine.magic('timer', () => subject => {
+    return timer(subject);
 });
+Alpine.data('collDown', (expiry) => timer(expiry))
+
+Alpine.start();
