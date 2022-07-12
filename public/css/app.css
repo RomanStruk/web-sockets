@@ -755,12 +755,6 @@ select {
 .-ml-px {
   margin-left: -1px;
 }
-.mr-auto {
-  margin-right: auto;
-}
-.ml-auto {
-  margin-left: auto;
-}
 .ml-1 {
   margin-left: 0.25rem;
 }
@@ -799,6 +793,12 @@ select {
 }
 .mt-1 {
   margin-top: 0.25rem;
+}
+.mr-auto {
+  margin-right: auto;
+}
+.ml-auto {
+  margin-left: auto;
 }
 .-mr-0\.5 {
   margin-right: -0.125rem;
@@ -1168,13 +1168,13 @@ select {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 .px-3 {
   padding-left: 0.75rem;

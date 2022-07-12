@@ -5075,7 +5075,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   key: 'websocketkey',
   wsHost: window.location.hostname,
   wsPort: 6001,
-  forceTLS: false,
+  wssPort: 6001,
+  forceTLS: true,
   disableStats: true
 });
 
